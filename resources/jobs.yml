@@ -1,1 +1,13 @@
-
+resources:
+  jobs:
+    clinical_trial_daily:
+      name: clinical-trial-daily
+      schedule:
+        quartz_cron_expression: "0 30 1 * * ?"
+        timezone_id: "Asia/Kolkata"
+      tasks:
+        - task_key: bronze
+          notebook_task:
+            notebook_path: ../src/bronze/ingest_clinical_trial.py
+            base_parameters:
+              catalog: ${var.catalog}
