@@ -1,1 +1,16 @@
+bundle:
+  name: clinical-trial-pipeline
 
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    default: clinical_dev
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-7405609380042127.7.azuredatabricks.net
