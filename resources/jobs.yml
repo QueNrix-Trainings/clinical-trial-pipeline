@@ -5,7 +5,7 @@ resources:
       email_notifications:
         on_failure: ["trainings@quenrix.com"]
       schedule:
-        quartz_cron_expression: "0 30 1 * * ?"
+        quartz_cron_expression: "0 30 1 * * ?"      # 1:30 AM IST, after the 1:00 AM ADF copy
         timezone_id: "Asia/Kolkata"
       tasks:
         - task_key: bronze
@@ -19,4 +19,16 @@ resources:
             notebook_path: ../src/bronze/dq_bronze.py
             base_parameters:
               catalog: ${var.catalog}
-        # silver will later use: depends_on: [{task_key: bronze_dq}]
+        - task_key: silver
+          depends_on: [{task_key: bronze_dq}]
+          notebook_task:
+            notebook_path: ../src/silver/clean_clinical_trial.py
+            base_parameters:
+              catalog: ${var.catalog}
+              max_quarantine_pct: "10"
+        - task_key: silver_dq
+          depends_on: [{task_key: silver}]
+          notebook_task:
+            notebook_path: ../src/silver/dq_silver.py
+            base_parameters:
+              catalog: ${var.catalog}
