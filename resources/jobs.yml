@@ -2,6 +2,8 @@ resources:
   jobs:
     clinical_trial_daily:
       name: clinical-trial-daily
+      email_notifications:
+        on_failure: ["trainings@quenrix.com"]
       schedule:
         quartz_cron_expression: "0 30 1 * * ?"
         timezone_id: "Asia/Kolkata"
@@ -11,3 +13,10 @@ resources:
             notebook_path: ../src/bronze/ingest_clinical_trial.py
             base_parameters:
               catalog: ${var.catalog}
+        - task_key: bronze_dq
+          depends_on: [{task_key: bronze}]
+          notebook_task:
+            notebook_path: ../src/bronze/dq_bronze.py
+            base_parameters:
+              catalog: ${var.catalog}
+        # silver will later use: depends_on: [{task_key: bronze_dq}]
